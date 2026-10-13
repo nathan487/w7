@@ -3,8 +3,10 @@ const list = document.querySelector('#todo-list');
 const input = document.querySelector('#todo-input');
 const addBtn = document.querySelector('#add-btn');
 const status = document.querySelector('#todo-status');
+const filterButtons = document.querySelectorAll('.filter-btn');
 
 let todos = load();
+let filter = 'all';
 
 function save() {
   localStorage.setItem(KEY, JSON.stringify(todos));
@@ -43,10 +45,23 @@ function toggleTodo(id) {
   render();
 }
 
+function setFilter(nextFilter) {
+  filter = nextFilter;
+  render();
+}
+
+function getShownTodos() {
+  return todos.filter((todo) => {
+    if (filter === 'done') return todo.completed;
+    if (filter === 'active') return !todo.completed;
+    return true;
+  });
+}
+
 function render() {
   list.replaceChildren();
 
-  todos.forEach((todo) => {
+  getShownTodos().forEach((todo) => {
     const item = document.createElement('li');
     const text = document.createElement('span');
     const deleteButton = document.createElement('button');
@@ -72,11 +87,18 @@ function render() {
     list.appendChild(item);
   });
 
-  const completedCount = todos.filter((todo) => todo.completed).length;
+  filterButtons.forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.filter === filter);
+  });
+
+  const completedCount = todos.reduce(
+    (count, todo) => count + (todo.completed ? 1 : 0),
+    0,
+  );
   status.textContent = `共 ${todos.length} 项，已完成 ${completedCount} 项。`;
 }
 
-if (list && input && addBtn && status) {
+if (list && input && addBtn && status && filterButtons.length > 0) {
   addBtn.addEventListener('click', () => {
     const text = input.value.trim();
 
@@ -89,6 +111,10 @@ if (list && input && addBtn && status) {
     addTodo(text);
     input.value = '';
     input.focus();
+  });
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => setFilter(button.dataset.filter));
   });
 
   render();

@@ -97,6 +97,25 @@ input:focus-visible {
 
 .todo-app__tasks { margin-top: 28px; }
 
+.todo-app__list-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.todo-app__filters { display: flex; gap: 6px; }
+
+.filter-btn {
+  padding: 6px 10px;
+  color: var(--brand-dark);
+  font-size: 14px;
+  background: #eaf5ff;
+}
+
+.filter-btn.is-active { color: #fff; background: var(--brand); }
+
 #todo-list {
   margin: 0;
   padding: 0;

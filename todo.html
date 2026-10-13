@@ -25,7 +25,14 @@
     </section>
 
     <section class="todo-app__tasks" aria-labelledby="task-list-title">
-      <h2 id="task-list-title">任务列表</h2>
+      <div class="todo-app__list-header">
+        <h2 id="task-list-title">任务列表</h2>
+        <div class="todo-app__filters" aria-label="筛选任务">
+          <button class="filter-btn is-active" type="button" data-filter="all">全部</button>
+          <button class="filter-btn" type="button" data-filter="active">进行中</button>
+          <button class="filter-btn" type="button" data-filter="done">已完成</button>
+        </div>
+      </div>
       <ul id="todo-list" aria-label="待办事项列表"></ul>
     </section>
   </main>
