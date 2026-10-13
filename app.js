@@ -1,26 +1,127 @@
-const todoInput = document.querySelector('#todo-input');
-const addButton = document.querySelector('#add-btn');
-const todoList = document.querySelector('#todo-list');
-const todoStatus = document.querySelector('#todo-status');
+const KEY = 'todo-v2-items';
+const list = document.querySelector('#todo-list');
+const input = document.querySelector('#todo-input');
+const addBtn = document.querySelector('#add-btn');
+const status = document.querySelector('#todo-status');
+const filterButtons = document.querySelectorAll('.filter-btn');
 
-if (todoInput && addButton && todoList && todoStatus) {
-  const addTodo = () => {
-    const text = todoInput.value.trim();
+let todos = load();
+let filter = 'all';
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(todos));
+}
+
+function load() {
+  const raw = localStorage.getItem(KEY);
+
+  if (raw === null) return [];
+
+  try {
+    const savedTodos = JSON.parse(raw);
+    return Array.isArray(savedTodos) ? savedTodos : [];
+  } catch {
+    return [];
+  }
+}
+
+function addTodo(text) {
+  todos = [...todos, { id: Date.now(), text, completed: false }];
+  save();
+  render();
+}
+
+function removeTodo(id) {
+  todos = todos.filter((todo) => todo.id !== id);
+  save();
+  render();
+}
+
+function toggleTodo(id) {
+  todos = todos.map((todo) => (
+    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  ));
+  save();
+  render();
+}
+
+function clearCompleted() {
+  todos = todos.filter((todo) => !todo.completed);
+  save();
+  render();
+}
+
+function setFilter(nextFilter) {
+  filter = nextFilter;
+  render();
+}
+
+function getShownTodos() {
+  return todos.filter((todo) => {
+    if (filter === 'done') return todo.completed;
+    if (filter === 'active') return !todo.completed;
+    return true;
+  });
+}
+
+function render() {
+  list.replaceChildren();
+
+  getShownTodos().forEach((todo) => {
+    const item = document.createElement('li');
+    const text = document.createElement('span');
+    const deleteButton = document.createElement('button');
+
+    item.className = 'todo-item';
+    item.dataset.id = todo.id;
+    text.className = 'todo-item__text';
+    text.textContent = todo.text;
+    deleteButton.className = 'todo-item__delete';
+    deleteButton.type = 'button';
+    deleteButton.textContent = '×';
+    deleteButton.setAttribute('aria-label', `删除：${todo.text}`);
+
+    if (todo.completed) item.classList.add('done');
+
+    item.addEventListener('click', () => toggleTodo(todo.id));
+    deleteButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      removeTodo(todo.id);
+    });
+
+    item.append(text, deleteButton);
+    list.appendChild(item);
+  });
+
+  filterButtons.forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.filter === filter);
+  });
+
+  const completedCount = todos.reduce(
+    (count, todo) => count + (todo.completed ? 1 : 0),
+    0,
+  );
+  status.textContent = `共 ${todos.length} 项，已完成 ${completedCount} 项。`;
+}
+
+if (list && input && addBtn && status && filterButtons.length > 0) {
+  addBtn.addEventListener('click', () => {
+    const text = input.value.trim();
 
     if (text === '') {
-      todoStatus.textContent = '请输入待办事项后再添加。';
-      todoInput.focus();
+      status.textContent = '请输入待办事项后再添加。';
+      input.focus();
       return;
     }
 
-    const item = document.createElement('li');
-    item.textContent = text;
-    todoList.appendChild(item);
+    addTodo(text);
+    input.value = '';
+    input.focus();
+  });
 
-    todoInput.value = '';
-    todoStatus.textContent = `已添加：${text}`;
-    todoInput.focus();
-  };
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => setFilter(button.dataset.filter));
+  });
 
-  addButton.addEventListener('click', addTodo);
+  render();
 }

@@ -3,23 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="JavaScript Todo 列表基础版">
-  <title>Todo 列表基础版</title>
+  <meta name="description" content="数据驱动的 Todo 列表">
+  <title>Todo V2.0</title>
   <link rel="stylesheet" href="todo.css">
 </head>
 <body>
   <main class="todo-app">
-    <h1>我的待办事项</h1>
-    <p class="intro">记录今天需要完成的学习任务。</p>
+    <header class="todo-app__header">
+      <p class="todo-app__eyebrow">TODO V2.0</p>
+      <h1>我的待办事项</h1>
+      <p>任务状态由数组统一管理，刷新后仍会保留。</p>
+    </header>
 
-    <div class="todo-entry">
+    <section class="todo-app__controls" aria-label="添加待办事项">
       <label for="todo-input">新增待办：</label>
-      <input id="todo-input" type="text" placeholder="例如：完成 JavaScript 练习">
-      <button id="add-btn" type="button">添加</button>
-    </div>
+      <div class="todo-app__input-row">
+        <input id="todo-input" type="text" placeholder="例如：完成数据驱动重构">
+        <button id="add-btn" type="button">添加</button>
+      </div>
+      <p id="todo-status" aria-live="polite">当前还没有待办事项。</p>
+    </section>
 
-    <p id="todo-status" aria-live="polite">当前还没有待办事项。</p>
-    <ul id="todo-list" aria-label="待办事项列表"></ul>
+    <section class="todo-app__tasks" aria-labelledby="task-list-title">
+      <div class="todo-app__list-header">
+        <h2 id="task-list-title">任务列表</h2>
+        <div class="todo-app__filters" aria-label="筛选任务">
+          <button class="filter-btn is-active" type="button" data-filter="all">全部</button>
+          <button class="filter-btn" type="button" data-filter="active">进行中</button>
+          <button class="filter-btn" type="button" data-filter="done">已完成</button>
+        </div>
+      </div>
+      <ul id="todo-list" aria-label="待办事项列表"></ul>
+    </section>
   </main>
   <script src="app.js"></script>
 </body>
