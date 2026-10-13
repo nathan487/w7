@@ -45,6 +45,12 @@ function toggleTodo(id) {
   render();
 }
 
+function clearCompleted() {
+  todos = todos.filter((todo) => !todo.completed);
+  save();
+  render();
+}
+
 function setFilter(nextFilter) {
   filter = nextFilter;
   render();
