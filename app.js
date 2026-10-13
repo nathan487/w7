@@ -7,6 +7,13 @@ const filterButtons = document.querySelectorAll('.filter-btn');
 
 let todos = load();
 let filter = 'all';
+let lastId = 0;
+
+// 同一毫秒内连续添加时 Date.now() 会重复，用「取较大值 +1」保证 id 单调递增且唯一
+function createId() {
+  lastId = Math.max(Date.now(), lastId + 1);
+  return lastId;
+}
 
 function save() {
   localStorage.setItem(KEY, JSON.stringify(todos));
@@ -26,7 +33,7 @@ function load() {
 }
 
 function addTodo(text) {
-  todos = [...todos, { id: Date.now(), text, completed: false }];
+  todos = [...todos, { id: createId(), text, completed: false }];
   save();
   render();
 }
