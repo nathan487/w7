@@ -144,13 +144,20 @@ input:focus-visible {
   text-decoration: line-through;
 }
 
+.todo-item__edit,
 .todo-item__delete {
   flex: 0 0 auto;
-  padding: 2px 9px;
-  font-size: 20px;
-  line-height: 1.2;
-  background: #d94841;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
 }
+
+.todo-item__edit { background: #2f8f5b; }
+
+.todo-item__edit:hover { background: #256f47; }
+
+.todo-item__delete { background: #d94841; }
 
 .todo-item__delete:hover { background: #b9332c; }
 
