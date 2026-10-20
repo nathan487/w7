@@ -52,6 +52,14 @@ function toggleTodo(id) {
   render();
 }
 
+function updateTodo(id, text) {
+  todos = todos.map((todo) => (
+    todo.id === id ? { ...todo, text } : todo
+  ));
+  save();
+  render();
+}
+
 function clearCompleted() {
   todos = todos.filter((todo) => !todo.completed);
   save();
@@ -77,12 +85,19 @@ function render() {
   getShownTodos().forEach((todo) => {
     const item = document.createElement('li');
     const text = document.createElement('span');
+    const editButton = document.createElement('button');
     const deleteButton = document.createElement('button');
 
     item.className = 'todo-item';
     item.dataset.id = todo.id;             // ① id 写进 DOM，点击时靠它反查是哪一条
     text.className = 'todo-item__text';
     text.textContent = todo.text;
+    editButton.className = 'todo-item__edit';
+    editButton.type = 'button';
+    editButton.textContent = '编辑';
+    editButton.dataset.action = 'edit';      // ③ 编辑操作
+    editButton.setAttribute('aria-label', `编辑：${todo.text}`);
+
     deleteButton.className = 'todo-item__delete';
     deleteButton.type = 'button';
     deleteButton.textContent = '删除';
@@ -91,7 +106,7 @@ function render() {
 
     if (todo.completed) item.classList.add('done');
 
-    item.append(text, deleteButton);
+    item.append(text, editButton, deleteButton);
     list.appendChild(item);
   });
 
@@ -133,12 +148,19 @@ if (list && input && addBtn && status && filterButtons.length > 0) {
     const id = Number(item.dataset.id);               // dataset 取出来是字符串，转回数字才能和数据里的 id 对上
     if (!id) return;                                  // 防御 3：id 为空/非法
 
+    const editBtn = event.target.closest('[data-action="edit"]');
     const deleteBtn = event.target.closest('[data-action="delete"]');
 
     if (deleteBtn && item.contains(deleteBtn)) {
       removeTodo(id);
+    } else if (editBtn && item.contains(editBtn)) {
+      const current = todos.find((todo) => todo.id === id);
+      const next = window.prompt('修改任务', current ? current.text : '');
+
+      // 边界：点取消（null）或 trim() 后为空都不改数据
+      if (next !== null && next.trim() !== '') updateTodo(id, next.trim());
     } else {
-      toggleTodo(id);   // 删除与切换互斥：只有不删除时才切换
+      toggleTodo(id);   // 删除、编辑、切换三者互斥
     }
   });
 
