@@ -80,21 +80,16 @@ function render() {
     const deleteButton = document.createElement('button');
 
     item.className = 'todo-item';
-    item.dataset.id = todo.id;
+    item.dataset.id = todo.id;             // ① id 写进 DOM，点击时靠它反查是哪一条
     text.className = 'todo-item__text';
     text.textContent = todo.text;
     deleteButton.className = 'todo-item__delete';
     deleteButton.type = 'button';
-    deleteButton.textContent = '×';
+    deleteButton.textContent = '删除';
+    deleteButton.dataset.action = 'delete';   // ② 标记操作类型
     deleteButton.setAttribute('aria-label', `删除：${todo.text}`);
 
     if (todo.completed) item.classList.add('done');
-
-    item.addEventListener('click', () => toggleTodo(todo.id));
-    deleteButton.addEventListener('click', (event) => {
-      event.stopPropagation();
-      removeTodo(todo.id);
-    });
 
     item.append(text, deleteButton);
     list.appendChild(item);
