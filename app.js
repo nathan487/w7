@@ -137,9 +137,9 @@ if (list && input && addBtn && status && filterButtons.length > 0) {
 
     if (deleteBtn && item.contains(deleteBtn)) {
       removeTodo(id);
+    } else {
+      toggleTodo(id);   // 删除与切换互斥：只有不删除时才切换
     }
-
-    toggleTodo(id);
   });
 
   render();
