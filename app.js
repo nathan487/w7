@@ -39,12 +39,14 @@ function addTodo(text) {
 }
 
 function removeTodo(id) {
+  console.log('[delete]', id);   // 插桩：任务2 的验证证据，点删除应只打印这一行
   todos = todos.filter((todo) => todo.id !== id);
   save();
   render();
 }
 
 function toggleTodo(id) {
+  console.log('[toggle]', id);   // 插桩：若删除后也打印这一行，说明分流缺失
   todos = todos.map((todo) => (
     todo.id === id ? { ...todo, completed: !todo.completed } : todo
   ));
@@ -53,6 +55,7 @@ function toggleTodo(id) {
 }
 
 function updateTodo(id, text) {
+  console.log('[edit]', id, text);
   todos = todos.map((todo) => (
     todo.id === id ? { ...todo, text } : todo
   ));

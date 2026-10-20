@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>任务2 缺陷复现页（修复前）</title>
+  <style>
+    body { font-family: system-ui, "Microsoft YaHei", sans-serif; margin: 24px; color: #222; }
+    h1 { font-size: 18px; }
+    .tip { background: #fff4e5; border-left: 4px solid #e8a33d; padding: 10px 14px; margin: 12px 0 20px; line-height: 1.7; }
+    ul { list-style: none; padding: 16px; margin: 0; border: 1px dashed #bbb; border-radius: 6px; min-height: 120px; }
+    li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid #eee; }
+    li:last-child { border-bottom: none; }
+    li.done span { text-decoration: line-through; color: #999; }
+    button { cursor: pointer; }
+    .del { background: #d94841; color: #fff; border: none; padding: 3px 10px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>任务2 缺陷复现页（修复前版本）</h1>
+  <div class="tip">
+    用途：截图 1 的取证页。<br>
+    ① 按 <b>F12</b> 打开控制台（Console）；② 点击任意一行的「删除」按钮；<br>
+    ③ 控制台会打印 <b>[delete]</b> 和 <b>[toggle]</b> 两行 —— 多出来的 [toggle] 就是缺陷证据。<br>
+    ④ 点击虚线框内的<b>空白处</b>：控制台应无任何输出、不报错（边界防御生效）。
+  </div>
+
+  <ul id="list"></ul>
+
+  <script>
+    // 下面这段代码就是课件第 11 页给出的「缺陷代码」，原样保留，仅把按钮文字与函数名对齐
+    const list = document.querySelector('#list');
+    let todos = [
+      { id: 1739827200001, text: '买牛奶', completed: false },
+      { id: 1739827200002, text: '写实验报告', completed: true },
+      { id: 1739827200003, text: '复习事件委托', completed: false },
+    ];
+
+    function render() {
+      list.innerHTML = '';
+      todos.forEach((t) => {
+        const li = document.createElement('li');
+        li.dataset.id = t.id;
+        if (t.completed) li.classList.add('done');
+        const span = document.createElement('span');
+        span.textContent = t.text;
+        const del = document.createElement('button');
+        del.className = 'del';
+        del.dataset.action = 'delete';
+        del.textContent = '删除';
+        li.append(span, del);
+        list.appendChild(li);
+      });
+    }
+
+    function deleteTodo(id) {
+      console.log('[delete]', id);
+      todos = todos.filter((t) => t.id !== id);
+      render();
+    }
+
+    function toggleTodo(id) {
+      console.log('[toggle]', id);
+      todos = todos.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t));
+      render();
+    }
+
+    list.addEventListener('click', (e) => {
+      if (!(e.target instanceof Element)) return;
+      const item = e.target.closest('li');
+      if (!item || !list.contains(item)) return;
+      const id = item.dataset.id;
+      if (!id) return;
+      const delBtn = e.target.closest('[data-action="delete"]');
+      if (delBtn && item.contains(delBtn)) {
+        deleteTodo(id);          // ← 删除
+      }
+      toggleTodo(id);            // ← 缺陷在第 11 行：删除之后，还会执行
+    });
+
+    render();
+  </script>
+</body>
+</html>
