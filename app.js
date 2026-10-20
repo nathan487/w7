@@ -125,5 +125,22 @@ if (list && input && addBtn && status && filterButtons.length > 0) {
     button.addEventListener('click', () => setFilter(button.dataset.filter));
   });
 
+  // 事件委托：监听器只绑一次，绑在不被重画的父容器 ul 上，靠 e.target 定位被点的那一条
+  list.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;   // 防御 1：target 不是元素
+    const item = event.target.closest('li');
+    if (!item || !list.contains(item)) return;        // 防御 2：closest 可能是 null
+    const id = Number(item.dataset.id);               // dataset 取出来是字符串，转回数字才能和数据里的 id 对上
+    if (!id) return;                                  // 防御 3：id 为空/非法
+
+    const deleteBtn = event.target.closest('[data-action="delete"]');
+
+    if (deleteBtn && item.contains(deleteBtn)) {
+      removeTodo(id);
+    }
+
+    toggleTodo(id);
+  });
+
   render();
 }
