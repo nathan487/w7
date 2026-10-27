@@ -1,171 +1,168 @@
-const KEY = 'todo-v2-items';
-const list = document.querySelector('#todo-list');
-const input = document.querySelector('#todo-input');
-const addBtn = document.querySelector('#add-btn');
-const status = document.querySelector('#todo-status');
-const filterButtons = document.querySelectorAll('.filter-btn');
-
-let todos = load();
-let filter = 'all';
-let lastId = 0;
-
-// 同一毫秒内连续添加时 Date.now() 会重复，用「取较大值 +1」保证 id 单调递增且唯一
-function createId() {
-  lastId = Math.max(Date.now(), lastId + 1);
-  return lastId;
-}
-
-function save() {
-  localStorage.setItem(KEY, JSON.stringify(todos));
-}
-
-function load() {
-  const raw = localStorage.getItem(KEY);
-
-  if (raw === null) return [];
-
-  try {
-    const savedTodos = JSON.parse(raw);
-    return Array.isArray(savedTodos) ? savedTodos : [];
-  } catch {
-    return [];
+"use strict";
+(() => {
+  // todo.ts
+  var lastId = 0;
+  function createId() {
+    lastId = Math.max(Date.now(), lastId + 1);
+    return lastId;
   }
-}
+  function parseId(raw) {
+    if (raw === void 0) return null;
+    const id = Number(raw);
+    return Number.isSafeInteger(id) ? id : null;
+  }
+  function isTodo(value) {
+    if (typeof value !== "object" || value === null) return false;
+    if (!("id" in value) || !("text" in value) || !("completed" in value)) return false;
+    return typeof value.id === "number" && typeof value.text === "string" && typeof value.completed === "boolean";
+  }
+  function parseTodos(raw) {
+    if (raw === null) return [];
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return [];
+    }
+    if (!Array.isArray(parsed)) return [];
+    const rows = parsed;
+    return rows.filter(isTodo);
+  }
+  function parseFilter(raw) {
+    if (raw === "active" || raw === "done") return raw;
+    return "all";
+  }
+  function addTodo(todos2, text) {
+    if (typeof text !== "string") return;
+    const trimmed = text.trim();
+    if (trimmed === "") return;
+    todos2.push({ id: createId(), text: trimmed, completed: false });
+  }
+  function removeTodo(todos2, id) {
+    const index = todos2.findIndex((todo) => todo.id === id);
+    if (index !== -1) todos2.splice(index, 1);
+  }
+  function toggleTodo(todos2, id) {
+    const target = todos2.find((todo) => todo.id === id);
+    if (target !== void 0) target.completed = !target.completed;
+  }
+  function updateTodo(todos2, id, text) {
+    const trimmed = text.trim();
+    if (trimmed === "") return;
+    const target = todos2.find((todo) => todo.id === id);
+    if (target !== void 0) target.text = trimmed;
+  }
+  function clearCompleted(todos2) {
+    for (let i = todos2.length - 1; i >= 0; i -= 1) {
+      if (todos2[i].completed) todos2.splice(i, 1);
+    }
+  }
+  function getShownTodos(todos2, filter2) {
+    return todos2.filter((todo) => {
+      if (filter2 === "done") return todo.completed;
+      if (filter2 === "active") return !todo.completed;
+      return true;
+    });
+  }
+  function countCompleted(todos2) {
+    return todos2.reduce((count, todo) => count + (todo.completed ? 1 : 0), 0);
+  }
 
-function addTodo(text) {
-  todos = [...todos, { id: createId(), text, completed: false }];
-  save();
-  render();
-}
-
-function removeTodo(id) {
-  console.log('[delete]', id);   // 插桩：任务2 的验证证据，点删除应只打印这一行
-  todos = todos.filter((todo) => todo.id !== id);
-  save();
-  render();
-}
-
-function toggleTodo(id) {
-  console.log('[toggle]', id);   // 插桩：若删除后也打印这一行，说明分流缺失
-  todos = todos.map((todo) => (
-    todo.id === id ? { ...todo, completed: !todo.completed } : todo
-  ));
-  save();
-  render();
-}
-
-function updateTodo(id, text) {
-  console.log('[edit]', id, text);
-  todos = todos.map((todo) => (
-    todo.id === id ? { ...todo, text } : todo
-  ));
-  save();
-  render();
-}
-
-function clearCompleted() {
-  todos = todos.filter((todo) => !todo.completed);
-  save();
-  render();
-}
-
-function setFilter(nextFilter) {
-  filter = nextFilter;
-  render();
-}
-
-function getShownTodos() {
-  return todos.filter((todo) => {
-    if (filter === 'done') return todo.completed;
-    if (filter === 'active') return !todo.completed;
-    return true;
-  });
-}
-
-function render() {
-  list.replaceChildren();
-
-  getShownTodos().forEach((todo) => {
-    const item = document.createElement('li');
-    const text = document.createElement('span');
-    const editButton = document.createElement('button');
-    const deleteButton = document.createElement('button');
-
-    item.className = 'todo-item';
-    item.dataset.id = todo.id;             // ① id 写进 DOM，点击时靠它反查是哪一条
-    text.className = 'todo-item__text';
-    text.textContent = todo.text;
-    editButton.className = 'todo-item__edit';
-    editButton.type = 'button';
-    editButton.textContent = '编辑';
-    editButton.dataset.action = 'edit';      // ③ 编辑操作
-    editButton.setAttribute('aria-label', `编辑：${todo.text}`);
-
-    deleteButton.className = 'todo-item__delete';
-    deleteButton.type = 'button';
-    deleteButton.textContent = '删除';
-    deleteButton.dataset.action = 'delete';   // ② 标记操作类型
-    deleteButton.setAttribute('aria-label', `删除：${todo.text}`);
-
-    if (todo.completed) item.classList.add('done');
-
-    item.append(text, editButton, deleteButton);
-    list.appendChild(item);
-  });
-
-  filterButtons.forEach((button) => {
-    button.classList.toggle('is-active', button.dataset.filter === filter);
-  });
-
-  const completedCount = todos.reduce(
-    (count, todo) => count + (todo.completed ? 1 : 0),
-    0,
-  );
-  status.textContent = `共 ${todos.length} 项，已完成 ${completedCount} 项。`;
-}
-
-if (list && input && addBtn && status && filterButtons.length > 0) {
-  addBtn.addEventListener('click', () => {
-    const text = input.value.trim();
-
-    if (text === '') {
-      status.textContent = '请输入待办事项后再添加。';
+  // main.ts
+  var KEY = "todo-v2-items";
+  var list = document.querySelector("#todo-list");
+  var input = document.querySelector("#todo-input");
+  var addBtn = document.querySelector("#add-btn");
+  var status = document.querySelector("#todo-status");
+  var filterButtons = document.querySelectorAll(".filter-btn");
+  var todos = parseTodos(localStorage.getItem(KEY));
+  var filter = "all";
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(todos));
+  }
+  function render() {
+    if (list === null || status === null) return;
+    list.replaceChildren();
+    getShownTodos(todos, filter).forEach((todo) => {
+      const item = document.createElement("li");
+      const text = document.createElement("span");
+      const editButton = document.createElement("button");
+      const deleteButton = document.createElement("button");
+      item.className = "todo-item";
+      item.dataset.id = String(todo.id);
+      text.className = "todo-item__text";
+      text.textContent = todo.text;
+      editButton.className = "todo-item__edit";
+      editButton.type = "button";
+      editButton.textContent = "\u7F16\u8F91";
+      editButton.dataset.action = "edit";
+      editButton.setAttribute("aria-label", `\u7F16\u8F91\uFF1A${todo.text}`);
+      deleteButton.className = "todo-item__delete";
+      deleteButton.type = "button";
+      deleteButton.textContent = "\u5220\u9664";
+      deleteButton.dataset.action = "delete";
+      deleteButton.setAttribute("aria-label", `\u5220\u9664\uFF1A${todo.text}`);
+      if (todo.completed) item.classList.add("done");
+      item.append(text, editButton, deleteButton);
+      list.appendChild(item);
+    });
+    filterButtons.forEach((button) => {
+      button.classList.toggle("is-active", parseFilter(button.dataset.filter) === filter);
+    });
+    status.textContent = `\u5171 ${todos.length} \u9879\uFF0C\u5DF2\u5B8C\u6210 ${countCompleted(todos)} \u9879\u3002`;
+  }
+  if (list !== null && input !== null && addBtn !== null && status !== null && filterButtons.length > 0) {
+    addBtn.addEventListener("click", () => {
+      const text = input.value.trim();
+      if (text === "") {
+        status.textContent = "\u8BF7\u8F93\u5165\u5F85\u529E\u4E8B\u9879\u540E\u518D\u6DFB\u52A0\u3002";
+        input.focus();
+        return;
+      }
+      addTodo(todos, text);
+      save();
+      render();
+      console.log("[add]", text);
+      input.value = "";
       input.focus();
-      return;
-    }
-
-    addTodo(text);
-    input.value = '';
-    input.focus();
-  });
-
-  filterButtons.forEach((button) => {
-    button.addEventListener('click', () => setFilter(button.dataset.filter));
-  });
-
-  // 事件委托：监听器只绑一次，绑在不被重画的父容器 ul 上，靠 e.target 定位被点的那一条
-  list.addEventListener('click', (event) => {
-    if (!(event.target instanceof Element)) return;   // 防御 1：target 不是元素
-    const item = event.target.closest('li');
-    if (!item || !list.contains(item)) return;        // 防御 2：closest 可能是 null
-    const id = Number(item.dataset.id);               // dataset 取出来是字符串，转回数字才能和数据里的 id 对上
-    if (!id) return;                                  // 防御 3：id 为空/非法
-
-    const editBtn = event.target.closest('[data-action="edit"]');
-    const deleteBtn = event.target.closest('[data-action="delete"]');
-
-    if (deleteBtn && item.contains(deleteBtn)) {
-      removeTodo(id);
-    } else if (editBtn && item.contains(editBtn)) {
-      const current = todos.find((todo) => todo.id === id);
-      const next = window.prompt('修改任务', current ? current.text : '');
-
-      // 边界：点取消（null）或 trim() 后为空都不改数据
-      if (next !== null && next.trim() !== '') updateTodo(id, next.trim());
-    } else {
-      toggleTodo(id);   // 删除、编辑、切换三者互斥
-    }
-  });
-
-  render();
-}
+    });
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        filter = parseFilter(button.dataset.filter);
+        render();
+      });
+    });
+    list.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      const item = event.target.closest("li");
+      if (item === null || !list.contains(item)) return;
+      const id = parseId(item.dataset.id);
+      if (id === null) return;
+      const deleteBtn = event.target.closest('[data-action="delete"]');
+      const editBtn = event.target.closest('[data-action="edit"]');
+      if (deleteBtn !== null && item.contains(deleteBtn)) {
+        console.log("[delete]", id);
+        removeTodo(todos, id);
+      } else if (editBtn !== null && item.contains(editBtn)) {
+        const current = todos.find((todo) => todo.id === id);
+        const next = window.prompt("\u4FEE\u6539\u4EFB\u52A1", current !== void 0 ? current.text : "");
+        if (next === null) return;
+        console.log("[edit]", id, next);
+        updateTodo(todos, id, next);
+      } else {
+        console.log("[toggle]", id);
+        toggleTodo(todos, id);
+      }
+      save();
+      render();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.altKey && event.key === "c") {
+        clearCompleted(todos);
+        save();
+        render();
+      }
+    });
+    render();
+  }
+})();
