@@ -1,0 +1,17 @@
+{
+  "name": "todo-ts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "第9周实验：TypeScript 重构 + Vitest 单元测试",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build": "esbuild main.ts --bundle --format=iife --target=es2020 --outfile=app.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0",
+    "esbuild": "^0.23.0"
+  }
+}
