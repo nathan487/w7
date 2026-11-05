@@ -20,7 +20,7 @@ test('维度2（格式）：正常添加，断言到具体文本而不是 toBeDe
   addTodo(todos, '学习TS');
 
   expect(todos.length).toBe(1);
-  expect(todos[0].text).toBe('学习TS');      // 原稿写 toBeDefined()：实现把文本存成空串也照样绿
+  expect(todos[0].text).toBe('学习TS'); // 原稿写 toBeDefined()：实现把文本存成空串也照样绿
   expect(todos[0].completed).toBe(false);
 });
 
@@ -39,7 +39,7 @@ test('维度2（格式）：空字符串被拦截（期望值是 0，不是 1）
 
   addTodo(todos, '');
 
-  expect(todos.length).toBe(0);              // 原稿写 toBe(1)：把「没拦住」当成了预期结果
+  expect(todos.length).toBe(0); // 原稿写 toBe(1)：把「没拦住」当成了预期结果
 });
 
 // 维度1（空值）：null —— AI 完全漏掉
@@ -78,7 +78,7 @@ test('维度2（格式拓展）：超长文本按业务约定不拦截，且内�
   addTodo(todos, longText);
 
   expect(todos.length).toBe(1);
-  expect(todos[0].text.length).toBe(5000);   // 不能被截断
+  expect(todos[0].text.length).toBe(5000); // 不能被截断
 });
 
 // 维度6（重复）：连续添加相同文本 —— 业务允许重复
@@ -90,7 +90,7 @@ test('维度6（重复）：相同文本允许重复添加', () => {
 
   expect(todos.length).toBe(2);
   expect(todos[0].text).toBe(todos[1].text);
-  expect(todos[0].id).not.toBe(todos[1].id);  // 两条 id 不能撞号
+  expect(todos[0].id).not.toBe(todos[1].id); // 两条 id 不能撞号
 });
 
 // 维度5（状态）：连续切换两次回到原状态

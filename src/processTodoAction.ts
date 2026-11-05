@@ -21,7 +21,7 @@ function isTodoAction(value: unknown): value is TodoAction {
 /** 抽成小函数，把复杂度与嵌套降下来；但 trim 校验一行都不能少 */
 function addOne(todos: Todo[], text: string): void {
   const trimmed = text.trim();
-  if (trimmed === '') return;                 // ← 业务规则：纯空白不能添加
+  if (trimmed === '') return; // ← 业务规则：纯空白不能添加
   todos.push({ id: createId(), text: trimmed, completed: false });
 }
 

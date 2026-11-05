@@ -40,9 +40,9 @@ export function isTodo(value: unknown): value is Todo {
   if (!('id' in value) || !('text' in value) || !('completed' in value)) return false;
 
   return (
-    typeof value.id === 'number'
-    && typeof value.text === 'string'
-    && typeof value.completed === 'boolean'
+    typeof value.id === 'number' &&
+    typeof value.text === 'string' &&
+    typeof value.completed === 'boolean'
   );
 }
 
@@ -55,13 +55,13 @@ export function parseTodos(raw: string | null): Todo[] {
   try {
     parsed = JSON.parse(raw);
   } catch {
-    return [];                       // 存进去的是坏 JSON：当作没有数据
+    return []; // 存进去的是坏 JSON：当作没有数据
   }
 
   if (!Array.isArray(parsed)) return [];
 
   const rows: unknown[] = parsed;
-  return rows.filter(isTodo);        // 过滤掉结构不对的脏记录，而不是整份丢掉
+  return rows.filter(isTodo); // 过滤掉结构不对的脏记录，而不是整份丢掉
 }
 
 export function parseFilter(raw: string | undefined): Filter {
@@ -70,9 +70,9 @@ export function parseFilter(raw: string | undefined): Filter {
 }
 
 export function addTodo(todos: Todo[], text: string): void {
-  if (typeof text !== 'string') return;   // 外部脏数据：null / undefined 不该崩
+  if (typeof text !== 'string') return; // 外部脏数据：null / undefined 不该崩
   const trimmed = text.trim();
-  if (trimmed === '') return;             // 空串与纯空格都不入库
+  if (trimmed === '') return; // 空串与纯空格都不入库
 
   todos.push({ id: createId(), text: trimmed, completed: false });
 }
@@ -97,7 +97,7 @@ export function updateTodo(todos: Todo[], id: number, text: string): void {
 
 export function clearCompleted(todos: Todo[]): void {
   for (let i = todos.length - 1; i >= 0; i -= 1) {
-    if (todos[i].completed) todos.splice(i, 1);   // 倒序删，下标不会前移漏删
+    if (todos[i].completed) todos.splice(i, 1); // 倒序删，下标不会前移漏删
   }
 }
 

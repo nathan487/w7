@@ -1,41 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Vite 工程化后的 Todo V3.0">
-  <title>Todo V3.0</title>
-</head>
-<body>
-  <main class="todo-app">
-    <header class="todo-app__header">
-      <p class="todo-app__eyebrow">TODO V3.0</p>
-      <h1>我的待办事项</h1>
-      <p>任务状态由数组统一管理，刷新后仍会保留。</p>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Vite 工程化后的 Todo V3.0" />
+    <title>Todo V3.0</title>
+  </head>
+  <body>
+    <main class="todo-app">
+      <header class="todo-app__header">
+        <p class="todo-app__eyebrow">TODO V3.0</p>
+        <h1>我的待办事项</h1>
+        <p>任务状态由数组统一管理，刷新后仍会保留。</p>
+      </header>
 
-    <section class="todo-app__controls" aria-label="添加待办事项">
-      <label for="todo-input">新增待办：</label>
-      <div class="todo-app__input-row">
-        <input id="todo-input" type="text" placeholder="例如：完成 Vite 迁移">
-        <button id="add-btn" type="button">添加</button>
-      </div>
-      <p id="todo-status" aria-live="polite">当前还没有待办事项。</p>
-    </section>
-
-    <section class="todo-app__tasks" aria-labelledby="task-list-title">
-      <div class="todo-app__list-header">
-        <h2 id="task-list-title">任务列表</h2>
-        <div class="todo-app__filters" aria-label="筛选任务">
-          <button class="filter-btn is-active" type="button" data-filter="all">全部</button>
-          <button class="filter-btn" type="button" data-filter="active">进行中</button>
-          <button class="filter-btn" type="button" data-filter="done">已完成</button>
+      <section class="todo-app__controls" aria-label="添加待办事项">
+        <label for="todo-input">新增待办：</label>
+        <div class="todo-app__input-row">
+          <input id="todo-input" type="text" placeholder="例如：完成 Vite 迁移" />
+          <button id="add-btn" type="button">添加</button>
         </div>
-      </div>
-      <ul id="todo-list" aria-label="待办事项列表"></ul>
-    </section>
-  </main>
-  <!-- Vite 的入口是 HTML，不是 main.ts；样式由 src/main.ts 里 import 进来 -->
-  <script type="module" src="/src/main.ts"></script>
-</body>
+        <p id="todo-status" aria-live="polite">当前还没有待办事项。</p>
+      </section>
+
+      <section class="todo-app__tasks" aria-labelledby="task-list-title">
+        <div class="todo-app__list-header">
+          <h2 id="task-list-title">任务列表</h2>
+          <div class="todo-app__filters" aria-label="筛选任务">
+            <button class="filter-btn is-active" type="button" data-filter="all">全部</button>
+            <button class="filter-btn" type="button" data-filter="active">进行中</button>
+            <button class="filter-btn" type="button" data-filter="done">已完成</button>
+          </div>
+        </div>
+        <ul id="todo-list" aria-label="待办事项列表"></ul>
+      </section>
+    </main>
+    <!-- Vite 的入口是 HTML，不是 main.ts；样式由 src/main.ts 里 import 进来 -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

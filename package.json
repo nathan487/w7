@@ -11,8 +11,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
-    "format": "prettier --write src/ tests/ index.html vite.config.ts",
-    "format:check": "prettier --check src/ tests/ index.html vite.config.ts"
+    "format": "prettier --write src/ tests/ index.html vite.config.ts vitest.config.ts",
+    "format:check": "prettier --check src/ tests/ index.html vite.config.ts vitest.config.ts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.18.0",

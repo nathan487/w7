@@ -26,7 +26,7 @@ test('addTodo 正常添加：长度 +1，且文本内容等于输入', () => {
 test('addTodo 纯空格：拦截，长度不变', () => {
   const todos: Todo[] = [];
 
-  addTodo(todos, '   ');          // 三个空格：看起来像有内容，trim 之后才是真的空
+  addTodo(todos, '   '); // 三个空格：看起来像有内容，trim 之后才是真的空
 
   expect(todos.length).toBe(0);
 });
@@ -48,7 +48,7 @@ test('toggleTodo 正常切换：目标那条翻转', () => {
   toggleTodo(todos, 1);
 
   expect(todos[0].completed).toBe(true);
-  expect(todos[1].completed).toBe(false);     // 其他条不受影响
+  expect(todos[1].completed).toBe(false); // 其他条不受影响
 });
 
 test('toggleTodo 不存在的 ID：不崩溃，长度不变', () => {

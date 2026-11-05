@@ -50,7 +50,7 @@ function render(): void {
     const deleteButton = document.createElement('button');
 
     item.className = 'todo-item';
-    item.dataset.id = String(todo.id);        // id 写进 DOM，点击时靠它反查
+    item.dataset.id = String(todo.id); // id 写进 DOM，点击时靠它反查
     text.className = 'todo-item__text';
     text.textContent = todo.text;
 
@@ -106,12 +106,12 @@ function applyEdit(id: number): boolean {
 /** 事件委托：监听器只绑一次，绑在不被重画的父容器 ul 上 */
 function handleListClick(event: MouseEvent): void {
   const target = event.target;
-  if (!(target instanceof Element)) return;                     // 防御 ①：target 不是元素
+  if (!(target instanceof Element)) return; // 防御 ①：target 不是元素
 
   const item = target.closest('li');
-  if (item === null || list === null || !list.contains(item)) return;   // 防御 ②：closest 可能为 null
+  if (item === null || list === null || !list.contains(item)) return; // 防御 ②：closest 可能为 null
 
-  const id = parseId(item.dataset.id);                          // 防御 ③：Number() + isSafeInteger
+  const id = parseId(item.dataset.id); // 防御 ③：Number() + isSafeInteger
   if (id === null) return;
 
   const action = detectAction(target, item);
@@ -129,7 +129,13 @@ function handleListClick(event: MouseEvent): void {
   render();
 }
 
-if (list !== null && input !== null && addBtn !== null && status !== null && filterButtons.length > 0) {
+if (
+  list !== null &&
+  input !== null &&
+  addBtn !== null &&
+  status !== null &&
+  filterButtons.length > 0
+) {
   addBtn.addEventListener('click', () => {
     const text = input.value.trim();
 
@@ -139,9 +145,9 @@ if (list !== null && input !== null && addBtn !== null && status !== null && fil
       return;
     }
 
-    addTodo(todos, text);            // 改数据
-    save();                          // 保存
-    render();                        // 重渲染
+    addTodo(todos, text); // 改数据
+    save(); // 保存
+    render(); // 重渲染
     console.log('[add]', text);
 
     input.value = '';
@@ -150,7 +156,7 @@ if (list !== null && input !== null && addBtn !== null && status !== null && fil
 
   filterButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      filter = parseFilter(button.dataset.filter);   // 视图状态，不写 localStorage
+      filter = parseFilter(button.dataset.filter); // 视图状态，不写 localStorage
       render();
     });
   });
