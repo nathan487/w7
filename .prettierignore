@@ -1,0 +1,11 @@
+node_modules/
+dist/
+package-lock.json
+app.js
+todo.html
+todo.css
+debug-before.html
+*.docx
+*.pptx
+materials/
+.workbuddy/
