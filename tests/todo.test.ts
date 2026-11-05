@@ -11,7 +11,7 @@
  */
 
 import { test, expect } from 'vitest';
-import { addTodo, toggleTodo, type Todo } from './todo';
+import { addTodo, toggleTodo, type Todo } from '../src/todo';
 
 test('addTodo 正常添加：长度 +1，且文本内容等于输入', () => {
   const todos: Todo[] = [];

@@ -11,7 +11,7 @@
  */
 
 import { test, expect } from 'vitest';
-import { addTodo, toggleTodo, type Todo } from './todo';
+import { addTodo, toggleTodo, type Todo } from '../src/todo';
 
 // 维度2（格式）：正常文本 —— 换掉原来的弱断言
 test('维度2（格式）：正常添加，断言到具体文本而不是 toBeDefined', () => {
