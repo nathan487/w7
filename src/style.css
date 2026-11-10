@@ -136,7 +136,8 @@ input:focus-visible {
   background: var(--brand);
 }
 
-#todo-list {
+/* React 版不需要靠 id 反查 DOM，改成 class 选择器 */
+.todo-list {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -187,6 +188,25 @@ input:focus-visible {
 
 .todo-item__delete:hover {
   background: #b9332c;
+}
+
+.todo-item__actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.todo-item__toggle {
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.todo-app__empty {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 @media (max-width: 520px) {
