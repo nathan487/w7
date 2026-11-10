@@ -14,14 +14,7 @@
  *
  * 纯函数：不碰 DOM、不碰 localStorage、不修改入参。
  */
-import {
-  addTodo,
-  clearCompleted,
-  removeTodo,
-  toggleTodo,
-  updateTodo,
-  type Todo,
-} from './todo';
+import { addTodo, clearCompleted, removeTodo, toggleTodo, updateTodo, type Todo } from './todo';
 
 /** 浅拷贝每一项：改某一项时必须连对象一起换，否则父组件 State 会被就地改掉 */
 function cloneTodos(todos: Todo[]): Todo[] {

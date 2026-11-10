@@ -5,19 +5,8 @@
  * 数据向下：todos / filter 交给子组件；事件向上：子组件调用 onAdd / onToggle 等回调。
  */
 import { useEffect, useState } from 'react';
-import {
-  countCompleted,
-  getShownTodos,
-  parseTodos,
-  type Filter,
-  type Todo,
-} from '../todo';
-import {
-  addTodoState,
-  removeTodoState,
-  toggleTodoState,
-  updateTodoState,
-} from '../todoState';
+import { countCompleted, getShownTodos, parseTodos, type Filter, type Todo } from '../todo';
+import { addTodoState, removeTodoState, toggleTodoState, updateTodoState } from '../todoState';
 import { TodoForm } from './TodoForm';
 import { TodoList } from './TodoList';
 

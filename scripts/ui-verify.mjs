@@ -121,7 +121,8 @@ try {
   const stateAfterAdd = latestState();
   check(stateLogs.length > 0, '控制台打印了 [todos]', `共 ${stateLogs.length} 条日志`);
   check(
-    stateAfterAdd.length === afterAdd.rows.length && stateAfterAdd[0]?.text === afterAdd.rows[0].text,
+    stateAfterAdd.length === afterAdd.rows.length &&
+      stateAfterAdd[0]?.text === afterAdd.rows[0].text,
     'State 数组内容与页面列表一致',
     `State=${JSON.stringify(stateAfterAdd)} / DOM=${JSON.stringify(afterAdd.rows)}`,
   );
@@ -136,7 +137,9 @@ try {
   let items = await page.$$('.todo-list .todo-item');
   const toggleBtn = await items[0].$('.todo-item__toggle');
   await toggleBtn.click();
-  await page.waitForFunction(() => document.querySelectorAll('.todo-list .todo-item.done').length === 1);
+  await page.waitForFunction(
+    () => document.querySelectorAll('.todo-list .todo-item.done').length === 1,
+  );
   await settle();
 
   const afterToggle = await snapshot();
@@ -183,7 +186,11 @@ try {
   await page.click('button[type="submit"]');
   await settle();
   const afterBlank = await snapshot();
-  check(afterBlank.rows.length === 1, '纯空格输入不入库（W9 规则仍在）', `列表 ${afterBlank.rows.length} 项`);
+  check(
+    afterBlank.rows.length === 1,
+    '纯空格输入不入库（W9 规则仍在）',
+    `列表 ${afterBlank.rows.length} 项`,
+  );
 
   // ⑥ 触发一次无关 State 更新（切筛选），确认没有手插 DOM 残留 / 重复节点
   await page.click('.todo-app__filters button:nth-child(2)');
