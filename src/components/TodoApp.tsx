@@ -5,12 +5,16 @@
  * 数据向下：todos / filter 交给子组件；事件向上：子组件调用 onAdd / onToggle 等回调。
  */
 import { useEffect, useState } from 'react';
+import { reorderTodos } from '../reorder';
+import { filterTodosByKeyword, getViewStats, parseSearch, type SearchState } from '../search';
 import { countCompleted, getShownTodos, parseTodos, type Filter, type Todo } from '../todo';
 import { addTodoState, removeTodoState, toggleTodoState, updateTodoState } from '../todoState';
 import { TodoForm } from './TodoForm';
 import { TodoList } from './TodoList';
+import { TodoSearch } from './TodoSearch';
 
 const STORAGE_KEY = 'todo-v2-items';
+const SEARCH_KEY = 'todo-v2-search';
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: 'all', label: '全部' },
@@ -22,11 +26,20 @@ export default function TodoApp() {
   // 初值只在首次渲染用；localStorage 里的脏数据仍由 W9 的 parseTodos 逐条校验
   const [todos, setTodos] = useState<Todo[]>(() => parseTodos(localStorage.getItem(STORAGE_KEY)));
   const [filter, setFilter] = useState<Filter>('all');
+  // 功能点 1：关键字独立 state，不写进 Todo，搜索不污染 todos 本身
+  const [search, setSearch] = useState<SearchState>(() =>
+    parseSearch(localStorage.getItem(SEARCH_KEY)),
+  );
 
-  // 副作用归副作用：State 变化后同步持久化。依赖数组写全 [todos]（课件 S26）。
+  // 副作用归副作用：State 变化后同步持久化。依赖数组写全（课件 S26）。
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
+
+  // 搜索条件持久化：刷新后关键字仍在（功能点 1 要求）
+  useEffect(() => {
+    localStorage.setItem(SEARCH_KEY, JSON.stringify(search));
+  }, [search]);
 
   // dev 模式下让控制台能读到本次 State，供「状态一致性」双轨验证比对。
   // 生产构建里 import.meta.env.DEV 为 false，这段会被 tree-shake 掉。
@@ -54,7 +67,15 @@ export default function TodoApp() {
     setTodos((prev) => updateTodoState(prev, id, next));
   }
 
-  const shownTodos = getShownTodos(todos, filter);
+  // 功能点 2：拖拽重排走不可变纯函数，函数式更新保证拿到上一步结果
+  function handleReorder(fromId: number, toId: number) {
+    setTodos((prev) => reorderTodos(prev, fromId, toId));
+  }
+
+  // 先按状态筛选，再按关键字过滤；关键字只在视图层生效，todos 原样不动
+  const filteredTodos = getShownTodos(todos, filter);
+  const shownTodos = filterTodosByKeyword(filteredTodos, search.keyword);
+  const stats = getViewStats(todos, shownTodos);
 
   return (
     <main className="todo-app">
@@ -66,8 +87,10 @@ export default function TodoApp() {
 
       <TodoForm onAdd={handleAdd} />
 
+      <TodoSearch value={search.keyword} onChange={(keyword) => setSearch({ keyword })} />
+
       <p id="todo-status" aria-live="polite">
-        共 {todos.length} 项，已完成 {countCompleted(todos)} 项。
+        当前视图 {stats.shown} 条 / 总计 {stats.total} 条；已完成 {countCompleted(todos)} 项。
       </p>
 
       <section className="todo-app__tasks" aria-labelledby="task-list-title">
@@ -92,6 +115,7 @@ export default function TodoApp() {
           onToggle={handleToggle}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          onReorder={handleReorder}
         />
       </section>
     </main>

@@ -65,6 +65,14 @@ input {
   border-radius: 10px;
 }
 
+.todo-app__search {
+  margin-top: 14px;
+  padding: 14px 20px;
+  background: #eef6ff;
+  border: 1px dashed #9cc6e8;
+  border-radius: 10px;
+}
+
 .todo-app__input-row {
   display: flex;
   gap: 10px;
@@ -153,6 +161,12 @@ input:focus-visible {
   background: #f8fbfe;
   border-left: 3px solid #86bee9;
   border-radius: 5px;
+  cursor: grab;
+}
+
+.todo-item:active {
+  cursor: grabbing;
+  opacity: 0.7;
 }
 
 .todo-item__text {

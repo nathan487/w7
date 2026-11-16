@@ -5,13 +5,8 @@
  * 断言到具体数组内容，不用 toBeDefined 这类弱断言（变异验证才有效）。
  */
 import { test, expect } from 'vitest';
-import {
-  filterTodosByKeyword,
-  getViewStats,
-  normalizeKeyword,
-  parseSearch,
-  type Todo,
-} from '../src/search';
+import { filterTodosByKeyword, getViewStats, normalizeKeyword, parseSearch } from '../src/search';
+import type { Todo } from '../src/todo';
 
 function sample(): Todo[] {
   return [

@@ -5,7 +5,8 @@
  * 变异验证：把实现改回原地 splice，这两条断言必须立刻变红。
  */
 import { test, expect } from 'vitest';
-import { parseDragId, reorderTodos, type Todo } from '../src/reorder';
+import { parseDragId, reorderTodos } from '../src/reorder';
+import type { Todo } from '../src/todo';
 
 function sample(): Todo[] {
   return [
