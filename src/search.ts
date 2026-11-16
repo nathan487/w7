@@ -47,11 +47,11 @@ export function parseSearch(raw: string | null): SearchState {
 }
 
 /**
- * AI 首版：为「少一次函数调用」把 normalizeKeyword 合并掉，直接小写化。
- * 缺陷：纯空格关键字 "   " 不会被归并为空串，includes 全部落空 → 列表被清空。
+ * 修复版：先 normalizeKeyword（trim 把纯空格归并为空串），再小写化。
+ * 边界防御不省：纯空格等价于「没搜」，返回完整视图而不是把列表清空。
  */
 export function filterTodosByKeyword(todos: Todo[], keyword: string): Todo[] {
-  const needle = keyword.toLocaleLowerCase();
+  const needle = normalizeKeyword(keyword).toLocaleLowerCase();
   if (needle === '') return todos.slice();
   return todos.filter((todo) => todo.text.toLocaleLowerCase().includes(needle));
 }

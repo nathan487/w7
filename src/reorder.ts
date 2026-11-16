@@ -23,17 +23,18 @@ export function parseDragId(raw: string | undefined): number | null {
 }
 
 /**
- * AI 首版：为了「少复制一次数组」直接在入参上 splice。
- * 缺陷：原地修改 todos —— React 里 setTodos(prev => reorderTodos(prev, ...))
- * 拿到的还是同一个引用，Object.is 判定未变，界面不会重渲染。
+ * 修复版：先在副本上操作，绝不原地修改入参。
+ * React 里 setTodos(prev => reorderTodos(prev, ...)) 拿到新引用 → Object.is 判定变化 → 重渲染。
+ * 即使 from/to 非法也返回一个副本，保证「永远不复用入参引用」这条不变量。
  */
 export function reorderTodos(todos: Todo[], fromId: number, toId: number): Todo[] {
   const from = todos.findIndex((todo) => todo.id === fromId);
   const to = todos.findIndex((todo) => todo.id === toId);
-  if (from === -1 || to === -1 || from === to) return todos;
+  const next = todos.slice();
+  if (from === -1 || to === -1 || from === to) return next;
 
-  const [moved] = todos.splice(from, 1);
-  if (moved === undefined) return todos;
-  todos.splice(to, 0, moved);
-  return todos;
+  const [moved] = next.splice(from, 1);
+  if (moved === undefined) return next;
+  next.splice(to, 0, moved);
+  return next;
 }
