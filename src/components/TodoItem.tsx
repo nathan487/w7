@@ -15,7 +15,12 @@ export interface TodoItemProps {
 
 export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
   return (
-    <li className={todo.completed ? 'todo-item done' : 'todo-item'}>
+    <li
+      className={todo.completed ? 'todo-item done' : 'todo-item'}
+      data-id={todo.id}
+      draggable
+      title="按住拖动可调整顺序"
+    >
       <span className="todo-item__text">{todo.text}</span>
       <span className="todo-item__actions">
         {/* onClick={fn} 传函数本身；写 onClick={fn()} 会在渲染时就调用（课件 S18） */}
