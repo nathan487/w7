@@ -14,6 +14,7 @@
     "format": "prettier --write src/ tests/ index.html vite.config.ts vitest.config.ts scripts/",
     "format:check": "prettier --check src/ tests/ index.html vite.config.ts vitest.config.ts scripts/",
     "verify:ui": "node scripts/ui-verify.mjs",
+    "verify:w12": "node scripts/w12-verify.mjs",
     "audit:dom": "node scripts/source-audit.mjs"
   },
   "dependencies": {

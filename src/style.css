@@ -57,6 +57,7 @@ input {
   max-width: 720px;
   margin: 0 auto;
   padding: 32px;
+  color: var(--text);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -125,13 +126,25 @@ input {
   margin-top: 7px;
 }
 
+.todo-app input {
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.todo-app input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
 #todo-input {
   flex: 1 1 0;
   min-width: 0;
   padding: 9px 11px;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+#todo-search {
   border-radius: 6px;
 }
 
