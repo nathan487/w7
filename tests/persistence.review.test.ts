@@ -12,16 +12,15 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test, expect } from 'vitest';
-import { TODOS_KEY } from '../src/persistence';
+import { loadTodos } from '../src/persistence';
 import type { StorageLike } from '../src/persistence';
 
 const read = (p: string): string => readFileSync(resolve(process.cwd(), p), 'utf8');
 
-// —— 被测函数（提交 A 指向 AI 版，提交 B 指向安全版）——
-// 当前：AI 修复版的读取逻辑（原地复刻 materials/persistence.aiFixed.tsx）
+// —— 被测函数（提交 A 指向 AI 版复刻，提交 B 指向安全版）——
+// 修复后：指向 src/persistence.loadTodos（try-catch + Array.isArray + 逐条校验）
 function reviewedLoad(store: StorageLike): unknown[] {
-  const saved = store.getItem(TODOS_KEY);
-  return saved ? (JSON.parse(saved) as unknown[]) : [];
+  return loadTodos(store);
 }
 
 function memory(seed: string | null): StorageLike {
