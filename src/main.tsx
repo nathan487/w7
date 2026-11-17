@@ -10,9 +10,15 @@
  */
 import { createRoot } from 'react-dom/client';
 import TodoApp from './components/TodoApp';
+import { ThemeProvider } from './ThemeContext';
 import './style.css';
 
 const container = document.getElementById('root');
 if (container === null) throw new Error('index.html 缺少 #root 挂载点');
 
-createRoot(container).render(<TodoApp />);
+// ThemeProvider 放在最上层：整棵组件树都是它的消费者子树（课件 S33）。
+createRoot(container).render(
+  <ThemeProvider>
+    <TodoApp />
+  </ThemeProvider>,
+);
