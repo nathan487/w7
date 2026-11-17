@@ -5,6 +5,7 @@
  * `const current = todo; current.completed = true` 这种「const 不等于冻结对象」的坑（课件 S13）。
  */
 import type { Todo } from '../todo';
+import { useTheme } from '../ThemeContext';
 
 export interface TodoItemProps {
   todo: Todo;
@@ -14,9 +15,13 @@ export interface TodoItemProps {
 }
 
 export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
+  // 消费者②：TodoItem 位于 TodoApp → TodoList → TodoItem 第三层，
+  // 中间层 TodoList 完全不用碰 theme，这就是 Context 免去「回调穿透」的价值。
+  const { theme } = useTheme();
+
   return (
     <li
-      className={todo.completed ? 'todo-item done' : 'todo-item'}
+      className={`todo-item todo-item--${theme} ${todo.completed ? 'done' : ''}`}
       data-id={todo.id}
       draggable
       title="按住拖动可调整顺序"

@@ -5,15 +5,17 @@
  * 数据向下：todos / filter 交给子组件；事件向上：子组件调用 onAdd / onToggle 等回调。
  */
 import { useEffect, useState } from 'react';
+import { createInitialTodos, saveTodos } from '../persistence';
+import { useTheme } from '../ThemeContext';
 import { reorderTodos } from '../reorder';
 import { filterTodosByKeyword, getViewStats, parseSearch, type SearchState } from '../search';
-import { countCompleted, getShownTodos, parseTodos, type Filter, type Todo } from '../todo';
+import { countCompleted, getShownTodos, type Filter, type Todo } from '../todo';
 import { addTodoState, removeTodoState, toggleTodoState, updateTodoState } from '../todoState';
+import { ThemeToggle } from './ThemeToggle';
 import { TodoForm } from './TodoForm';
 import { TodoList } from './TodoList';
 import { TodoSearch } from './TodoSearch';
 
-const STORAGE_KEY = 'todo-v2-items';
 const SEARCH_KEY = 'todo-v2-search';
 
 const FILTERS: { value: Filter; label: string }[] = [
@@ -23,17 +25,21 @@ const FILTERS: { value: Filter; label: string }[] = [
 ];
 
 export default function TodoApp() {
-  // 初值只在首次渲染用；localStorage 里的脏数据仍由 W9 的 parseTodos 逐条校验
-  const [todos, setTodos] = useState<Todo[]>(() => parseTodos(localStorage.getItem(STORAGE_KEY)));
+  const { theme } = useTheme(); // 消费者①：容器也要按当前主题给根节点换样式
+
+  // W12：惰性初始化收敛到 persistence.createInitialTodos，内部 parseTodos 逐条校验脏数据。
+  // 传的是函数本身（不是调用结果），React 只在首次挂载调用一次（课件 S25）。
+  const [todos, setTodos] = useState<Todo[]>(createInitialTodos(localStorage));
   const [filter, setFilter] = useState<Filter>('all');
   // 功能点 1：关键字独立 state，不写进 Todo，搜索不污染 todos 本身
   const [search, setSearch] = useState<SearchState>(() =>
     parseSearch(localStorage.getItem(SEARCH_KEY)),
   );
 
-  // 副作用归副作用：State 变化后同步持久化。依赖数组写全（课件 S26）。
+  // 副作用归副作用：State 变化后同步持久化。依赖数组写全（课件 S26/S27）。
+  // 只有一个写入 Effect；读取已提前到惰性初始化，不存在双 Effect 覆盖窗口。
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    saveTodos(localStorage, todos);
   }, [todos]);
 
   // 搜索条件持久化：刷新后关键字仍在（功能点 1 要求）
@@ -78,11 +84,16 @@ export default function TodoApp() {
   const stats = getViewStats(todos, shownTodos);
 
   return (
-    <main className="todo-app">
+    <main className={`todo-app theme-${theme}`} data-theme={theme}>
       <header className="todo-app__header">
-        <p className="todo-app__eyebrow">TODO V4.0 · REACT</p>
-        <h1>我的待办事项</h1>
-        <p>UI = f(Props, State)：数据变了，界面自己跟着变，全程零 DOM 操作。</p>
+        <div className="todo-app__header-top">
+          <div>
+            <p className="todo-app__eyebrow">TODO V4.0 · REACT + CONTEXT</p>
+            <h1>我的待办事项</h1>
+          </div>
+          <ThemeToggle />
+        </div>
+        <p>主题由 Context 跨层级下发；数据由 State 驱动，刷新后仍在。</p>
       </header>
 
       <TodoForm onAdd={handleAdd} />

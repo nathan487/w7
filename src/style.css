@@ -1,4 +1,7 @@
-:root {
+/* 主题调色板：Context 把 theme 写到 .todo-app 的 data-theme，
+   下面的属性选择器只改变量值，组件代码一行都不用改（课件 S31/S32）。 */
+:root,
+[data-theme='light'] {
   --brand: #146cbb;
   --brand-dark: #0b4f8a;
   --text: #263544;
@@ -6,7 +9,24 @@
   --border: #dbe8f2;
   --surface: #ffffff;
   --page: #f2f7fb;
+  --field: #f8fbfe;
+  --search: #eef6ff;
+  --search-border: #9cc6e8;
   --done: #78909c;
+}
+
+[data-theme='dark'] {
+  --brand: #7fb8f0;
+  --brand-dark: #a9d2f7;
+  --text: #e8eef4;
+  --muted: #9fb3c6;
+  --border: #33465a;
+  --surface: #1b2733;
+  --page: #101822;
+  --field: #243343;
+  --search: #1e3044;
+  --search-border: #3d6288;
+  --done: #7d8f9c;
 }
 
 * {
@@ -20,6 +40,12 @@ body {
   font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
   line-height: 1.6;
   background: var(--page);
+  transition: background 0.2s ease;
+}
+
+/* 卡片拿到了 data-theme，但 body 在它外层；用 :has 让整页背景一起换肤 */
+body:has([data-theme='dark']) {
+  background: #101822;
 }
 
 button,
@@ -35,6 +61,26 @@ input {
   border: 1px solid var(--border);
   border-radius: 14px;
   box-shadow: 0 12px 30px rgba(27, 82, 127, 0.12);
+}
+
+.todo-app__header-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.theme-toggle {
+  padding: 8px 14px;
+  font-size: 13px;
+  background: var(--field);
+  color: var(--brand-dark);
+  border: 1px solid var(--border);
+}
+
+.theme-toggle:hover {
+  background: var(--search);
 }
 
 .todo-app__header h1,
@@ -61,15 +107,15 @@ input {
 .todo-app__controls {
   margin-top: 24px;
   padding: 20px;
-  background: #f8fbfe;
+  background: var(--field);
   border-radius: 10px;
 }
 
 .todo-app__search {
   margin-top: 14px;
   padding: 14px 20px;
-  background: #eef6ff;
-  border: 1px dashed #9cc6e8;
+  background: var(--search);
+  border: 1px dashed var(--search-border);
   border-radius: 10px;
 }
 
@@ -84,7 +130,8 @@ input {
   min-width: 0;
   padding: 9px 11px;
   color: var(--text);
-  border: 1px solid #bcd4e6;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 6px;
 }
 
@@ -136,7 +183,7 @@ input:focus-visible {
   padding: 6px 10px;
   color: var(--brand-dark);
   font-size: 14px;
-  background: #eaf5ff;
+  background: var(--search);
 }
 
 .filter-btn.is-active {
@@ -158,8 +205,8 @@ input:focus-visible {
   gap: 12px;
   margin-top: 9px;
   padding: 11px 12px;
-  background: #f8fbfe;
-  border-left: 3px solid #86bee9;
+  background: var(--field);
+  border-left: 3px solid var(--brand);
   border-radius: 5px;
   cursor: grab;
 }
